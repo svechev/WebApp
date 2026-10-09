@@ -33,11 +33,4 @@ function validatePassword(password) {
     return null;
 }
 
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        validateUserName,
-        validateEmail,
-        validatePassword
-    };
-}
+module.exports = { validateUserName, validateEmail, validatePassword };

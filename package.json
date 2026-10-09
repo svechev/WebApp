@@ -5,7 +5,8 @@
   "main": "register_script.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test"
+    "test": "node --test",
+    "coverage": "node --test --experimental-test-coverage"
   },
   "keywords": [],
   "author": "",
