@@ -1,12 +1,33 @@
+const argon2 = require('argon2');
 const db = require('./db.js');
 
-async function createUser(user) {
+async function createUser(username, email, password_hash) {
     const [result] = await db.execute(
         'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
-        [user.username, user.email, user.password_hash]
+        [username, email, password_hash]
     );
 
     return result;
 }
 
-module.exports = {createUser};
+async function checkUser(username, password) {
+    const [rows] = await db.execute(
+        'SELECT password_hash FROM users WHERE username = ?',
+        [username]
+    );
+
+    if (rows.length === 0) {
+        throw new Error('Invalid username or password');
+    }
+    const password_hash = rows[0].password_hash;
+
+    const valid = await argon2.verify(password_hash, password);
+
+    if (!valid) {
+        throw new Error('Invalid username or password');
+    }
+
+    return true;
+}
+
+module.exports = {createUser, checkUser};

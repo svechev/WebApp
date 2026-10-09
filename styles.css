@@ -6,7 +6,7 @@ body {
     background-color: #777;
 }
 
-label, .hint {
+label, .hint, .switch {
     font-size: large;
 }
 
@@ -25,9 +25,15 @@ input {
     background-color: #ddd;
 }
 
+
 .field, button {
     padding: 10px;
     margin: 10px;
+}
+
+#login-form > .field {
+    display: flex;
+    justify-content: end;
 }
 
 .error {
@@ -38,6 +44,6 @@ input {
     color: green;
 }
 
-#register-btn {
+#register-btn, #login-btn {
     width: 25%;
 }
