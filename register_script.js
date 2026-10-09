@@ -12,50 +12,27 @@ function clearErrors() {
     successField.textContent = "";  // clear the success field too just in case
 }
 
-function validateUserName(username) {
-    if (username.length == 0) {
-        showError('username-error', 'Потребителското име е задължително!');
-        return false;
-    }
-    if (username.length > 32 || username.length < 3) {
-        showError('username-error', 'Потребителското име трябва да съдържа от 3 до 32 символа!');
-        return false;
-    }
-    return true;
-}
-
-function validateEmail(email) {
-    if (email.length == 0) {
-        showError('email-error', 'Имейл адресът е задължителен!');
-        return false;
-    }
-    const emailFormat = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailFormat.test(email)) {
-        showError('email-error', 'Невалиден имейл адрес!');
-        return false;
-    }
-    return true;
-}
-
-function validatePassword(password) {
-    if (password.length == 0) {
-        showError('password-error', 'Паролата е задължителна!');
-        return false;
-    }
-    if (password.length < 8) {
-        showError('password-error', 'Паролата трябва да е поне 8 символа!');
-        return false;
-    }
-    const passwordFormat = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z0-9]+$/;
-    if (!passwordFormat.test(password)) {
-        showError('password-error', 'В паролата трябва да има поне една главна и малка буква и цифра!');
-        return false;
-    }
-    return true;
-}
-
 function validateData(username, email, password) {
-    return validateUserName(username) && validateEmail(email) && validatePassword(password) ;
+    const usernameError = validateUserName(username);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    if (usernameError) {
+        showError('username-error', usernameError);
+        return false;
+    }
+
+    if (emailError) {
+        showError('email-error', emailError);
+        return false;
+    }
+
+    if (passwordError) {
+        showError('password-error', passwordError);
+        return false;
+    }
+
+    return !usernameError && !emailError && !passwordError;
 }
 
 var submitHandler = async function(e) {
@@ -133,3 +110,11 @@ captchaButton.addEventListener('click', generateCaptcha);
 
 const regForm = document.getElementById('reg-form');
 regForm.addEventListener('submit', submitHandler);
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        validateUserName,
+        validateEmail,
+        validatePassword
+    };
+}
