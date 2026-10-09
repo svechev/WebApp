@@ -1,0 +1,43 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #777;
+}
+
+label, .hint {
+    font-size: large;
+}
+
+input {
+    margin-left: 15px;
+}
+
+.form {
+    display: flex;
+    width: max-content;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    margin: 20px;
+    border: solid gray 2px;
+    background-color: #ddd;
+}
+
+.field {
+    padding: 10px;
+    margin: 10px;
+}
+
+.error {
+    color: red;
+}
+
+#success {
+    color: green;
+}
+
+#register-btn {
+    width: 25%;
+}
