@@ -30,6 +30,20 @@ async function checkUser(username, password) {
     return rows[0].id;
 }
 
+async function getUserById(userId) {
+    const [rows] = await db.execute(
+        'SELECT id, username FROM users WHERE id = ?',
+        [userId]
+    );
+
+    if (rows.length === 1) {
+        return rows[0];
+    }
+    else {
+        return null;
+    }
+}
+
 // function only used in testing
 async function deleteUser(username) {
     const [result] = await db.execute(
@@ -41,4 +55,4 @@ async function deleteUser(username) {
 }
 
 
-module.exports = {createUser, checkUser, deleteUser};
+module.exports = {createUser, checkUser, deleteUser, getUserById};

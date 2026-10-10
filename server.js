@@ -6,7 +6,7 @@ const argon2 = require('argon2');
 const crypto = require('crypto');
 
 const { generateCaptcha, verifyCaptcha } = require('./helpers/captcha.js');
-const { createUser, checkUser } = require('./helpers/db_queries.js');
+const { createUser, checkUser, getUserById } = require('./helpers/db_queries.js');
 
 const sessions = new Map();
 
@@ -198,6 +198,59 @@ const server = http.createServer(async (req, res) => {
             console.log("error code: " + error.code);
             res.writeHead(400, { 'Content-Type': 'application/json' }); 
             res.end(JSON.stringify({ message: 'Registration error!' }));
+        }
+    }
+
+    // handle user log out
+    else if (req.method === 'POST' && pathname === '/api/logout') {
+        const sessionCookie = (req.headers.cookie || '').split('; ').find(cookie => cookie.startsWith('sessionId='));
+        if (sessionCookie) {
+            const sessionId = sessionCookie.substring('sessionId='.length);
+            sessions.delete(sessionId);
+        }
+
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Set-Cookie': 'sessionId=; HttpOnly; Path=/; Max-Age=0'
+        });
+
+        res.end(JSON.stringify({ message: 'Log out success' }));
+        return;
+    }
+
+    // handle loading home page
+    else if (req.method === 'GET' && pathname === '/api/user') {
+        const session = getSession(req);
+
+        if (!session) {
+            res.writeHead(401, {
+                'Content-Type': 'application/json'
+            });
+            res.end(JSON.stringify({ message: 'Unauthorized' }));
+            return;
+        }
+
+        try {
+            const user = await getUserById(session.userId);
+
+            if (!user) {
+                res.writeHead(401, {
+                    'Content-Type': 'application/json'
+                });
+                res.end(JSON.stringify({ message: 'Unauthorized' }));
+                return;
+            }
+
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store'
+            });
+            res.end(JSON.stringify({ username: user.username }));
+        } catch (error) {
+            console.error('Fail retrieving user: ', error);
+
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Server error' }));
         }
     }
 
