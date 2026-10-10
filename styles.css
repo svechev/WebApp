@@ -3,7 +3,7 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: #777;
+    background-color: #888;
 }
 
 label, .hint, .switch {
@@ -14,7 +14,7 @@ input {
     margin-left: 15px;
 }
 
-.form {
+.form, .container {
     display: flex;
     width: max-content;
     justify-content: center;

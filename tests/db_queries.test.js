@@ -19,8 +19,8 @@ describe('database operations tests', () => {
     });
 
     it('check user test', async () => {
-        const result = await checkUser(newUsername, newPassword);
-        assert.equal(result, true);
+        const resultId = await checkUser(newUsername, newPassword);
+        assert.equal(resultId > 0, true);
     })
 
     after(async () => {

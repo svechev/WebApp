@@ -12,7 +12,7 @@ async function createUser(username, email, password_hash) {
 
 async function checkUser(username, password) {
     const [rows] = await db.execute(
-        'SELECT password_hash FROM users WHERE username = ?',
+        'SELECT id, password_hash FROM users WHERE username = ?',
         [username]
     );
 
@@ -27,7 +27,7 @@ async function checkUser(username, password) {
         throw new Error('Invalid username or password');
     }
 
-    return true;
+    return rows[0].id;
 }
 
 // function only used in testing

@@ -3,9 +3,12 @@ const fs = require('fs');
 const url = require('url');
 const path = require('path');
 const argon2 = require('argon2');
+const crypto = require('crypto');
 
 const { generateCaptcha, verifyCaptcha } = require('./helpers/captcha.js');
 const { createUser, checkUser } = require('./helpers/db_queries.js');
+
+const sessions = new Map();
 
 const PORT = 8000;
 const pages = { 
@@ -19,6 +22,27 @@ const contentTypes = {
     '.js': 'text/javascript'
 }
 
+// helper method
+function getSession(req) {
+    const cookies = req.headers.cookie || '';
+
+    const sessionCookie = cookies.split('; ').find(cookie => cookie.startsWith('sessionId='));
+
+    if (!sessionCookie) return null;
+
+    const sessionId = sessionCookie.substring('sessionId='.length);
+    const session = sessions.get(sessionId);
+
+    if (!session) return null;
+
+    if (Date.now() >= session.expiresAt) {
+        sessions.delete(sessionId);
+        return null;
+    }
+
+    return session;
+}
+
 
 const server = http.createServer(async (req, res) => {
     const parsedUrl = url.parse(req.url, true);
@@ -28,6 +52,17 @@ const server = http.createServer(async (req, res) => {
 
     // handle browser request for html page
     if (req.method === 'GET' && pages[pathname]) { 
+        
+        if (pathname === '/home' || pathname === '/edit') {
+            const session = getSession(req);
+    
+            if (!session) {
+                res.writeHead(302, { Location: '/login' });
+                res.end();
+                return;
+            }
+        }
+        
         const filePath = pages[pathname];
         fs.readFile(filePath, (err, data) => { 
             if (err) { 
@@ -38,8 +73,8 @@ const server = http.createServer(async (req, res) => {
             
             res.writeHead(200, { 'Content-Type': 'text/html' }); 
             res.end(data); });
-            return; 
-        }
+        return; 
+    }
 
     // handle requests for CSS styles and js scripts
     else if (req.method === 'GET' && contentTypes[fileExtension]) { 
@@ -144,8 +179,18 @@ const server = http.createServer(async (req, res) => {
         const { username, password } = body;  
         
         try {
-            await checkUser(username, password);
-            res.writeHead(200, { 'Content-Type': 'application/json' }); 
+            const userId = await checkUser(username, password);
+
+            const sessionId = crypto.randomBytes(16).toString('base64');
+            sessions.set(sessionId, {
+                userId: userId,
+                expiresAt: Date.now() + 30 * 60 * 1000
+            });
+
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Set-Cookie': `sessionId=${sessionId}; HttpOnly; Path=/; Max-Age=1800`
+            });
             res.end(JSON.stringify({ message: 'Login success!' }));
             return;
         }
