@@ -30,4 +30,15 @@ async function checkUser(username, password) {
     return true;
 }
 
-module.exports = {createUser, checkUser};
+// function only used in testing
+async function deleteUser(username) {
+    const [result] = await db.execute(
+        'DELETE FROM users WHERE username = ?',
+        [username]
+    );
+
+    return result;
+}
+
+
+module.exports = {createUser, checkUser, deleteUser};
