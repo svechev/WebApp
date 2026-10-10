@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <h1>Редакция на профила</h1>
+        <form class="form" id="edit-form">
+            <div class="field">
+                <label for="current-password">Парола*</label>
+                <input id="current-password" name="current-password" type="password" required/>
+            </div>
+            
+            <div class="field">
+                <label for="new-username">Ново потребителско име</label>
+                <input id="new-username" name="new-username" type="text" maxlength="32"/>
+                <div class="hint">Оставете празно, ако не искате да промените</div>
+            </div>
+
+            <div class="field">
+                <label for="new-password">Нова парола</label>
+                <input id="new-password" name="new-password" type="password"/>
+                <div class="hint">Оставете празно, ако не искате да промените</div>
+            </div>
+
+            <div class="field">
+                <label for="confirm-password">Потвърдете новата парола</label>
+                <input id="confirm-password" name="confirm-password" type="password"/>
+            </div>
+            
+            <button id="submit-edit-btn">Промяна</button>
+        
+            <div class="error" id="edit-error"></div>
+            <div id="success"></div>
+        </form>
+
+        <p class="switch">
+            Не искаш промяна?
+            <a href="./home">Начало</a>
+        </p>
+
+        <script src="/helpers/validation.js" defer></script>
+        <script src="edit_script.js" async defer></script>
+    </body>
+</html>

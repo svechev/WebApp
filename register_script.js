@@ -66,7 +66,7 @@ var submitHandler = async function(e) {
         }
 
         let successField = document.getElementById('success');
-        successField.textContent = 'Успешна регистрация! Влезте през login';
+        successField.textContent = 'Успешна регистрация! Влезте през Вход';
     }
     catch (error) {
         showError('register-error', 'Грешка при свързване със сървъра.');
@@ -110,11 +110,3 @@ captchaButton.addEventListener('click', generateCaptcha);
 
 const regForm = document.getElementById('reg-form');
 regForm.addEventListener('submit', submitHandler);
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        validateUserName,
-        validateEmail,
-        validatePassword
-    };
-}

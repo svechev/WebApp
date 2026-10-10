@@ -44,6 +44,6 @@ input {
     color: green;
 }
 
-#register-btn, #login-btn {
+#register-btn, #login-btn, #submit-edit-btn {
     width: 25%;
 }

@@ -38,7 +38,28 @@ const logoutHandler = async function() {
     }
 }
 
+const editHandler = async function() {
+    try {
+        const response = await fetch('/edit'); 
+        
+        if (response.ok) {
+            window.location.href = '/edit';
+        }
+        else {
+            console.log('Грешка!'); 
+            return; 
+        }
+        
+    }
+    catch (error) {
+        console.log('Грешка при свързване със сървъра.');
+    }
+}
+
 loadWelcomeMessage();
 
 const logoutButton = document.getElementById('logout-btn');
 logoutButton.addEventListener('click', logoutHandler);
+
+const editButton = document.getElementById('edit-btn');
+editButton.addEventListener('click', editHandler);
