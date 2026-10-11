@@ -65,7 +65,8 @@ async function editUser(oldUsername, newUsername, newPassword) {
         parameters = [newUsername, passwordHash, oldUsername];
     }
 
-    await db.execute(query, parameters);
+    const [result] = await db.execute(query, parameters);
+    return result;
 }
 
 // function only used in testing

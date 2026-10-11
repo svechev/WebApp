@@ -23,6 +23,10 @@ function validateProfileChanges(newUsername, newPassword, confirmPassword) {
         return 'Въведете нова парола!';
     }
 
+    if (newUsername === '' && newPassword === '') {
+        return 'Въведете ново потребитеско име или парола';
+    }
+
     return null;
 }
 
@@ -36,6 +40,7 @@ const submitEditHandler = async function(e) {
 
     clearErrorField();
     const errorField = document.getElementById('edit-error');
+
     const error = validateProfileChanges(newUsername, newPassword, confirmPassword);
     
     if (error !== null) {
