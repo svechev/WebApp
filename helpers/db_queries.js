@@ -44,6 +44,30 @@ async function getUserById(userId) {
     }
 }
 
+async function editUser(oldUsername, newUsername, newPassword) {
+    let query = '';
+    let parameters = null;
+    let passwordHash = '';
+    if (newPassword !== '') {
+        passwordHash = await argon2.hash(newPassword, { type: argon2.argon2id });
+    }
+
+    if (newUsername === '') {
+        query = 'UPDATE users SET password_hash = ? WHERE username = ?';
+        parameters = [passwordHash, oldUsername];
+    }
+    else if (newPassword === '') {
+        query = 'UPDATE users SET username = ? WHERE username = ?';
+        parameters = [newUsername, oldUsername];
+    }
+    else { // update both
+        query = 'UPDATE users SET username = ?, password_hash = ? WHERE username = ?';
+        parameters = [newUsername, passwordHash, oldUsername];
+    }
+
+    await db.execute(query, parameters);
+}
+
 // function only used in testing
 async function deleteUser(username) {
     const [result] = await db.execute(
@@ -54,5 +78,4 @@ async function deleteUser(username) {
     return result;
 }
 
-
-module.exports = {createUser, checkUser, deleteUser, getUserById};
+module.exports = {createUser, checkUser, deleteUser, getUserById, editUser};

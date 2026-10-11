@@ -6,7 +6,7 @@ const argon2 = require('argon2');
 const crypto = require('crypto');
 
 const { generateCaptcha, verifyCaptcha } = require('./helpers/captcha.js');
-const { createUser, checkUser, getUserById } = require('./helpers/db_queries.js');
+const { createUser, checkUser, getUserById, editUser } = require('./helpers/db_queries.js');
 
 const sessions = new Map();
 
@@ -251,6 +251,65 @@ const server = http.createServer(async (req, res) => {
 
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'Server error' }));
+        }
+    }
+
+    // handle user edit profile request
+    else if (req.method === 'PUT' && pathname === '/api/edit') {
+        // check session
+        const session = getSession(req);
+
+        if (!session) {
+            res.writeHead(401, {
+                'Content-Type': 'application/json'
+            });
+            res.end(JSON.stringify({ message: 'Unauthorized' }));
+            return;
+        }
+
+        // read json
+        let rawBody = '';
+
+        for await (const chunk of req) {
+            rawBody += chunk;
+        }
+
+        try {
+            body = JSON.parse(rawBody);
+        } catch {
+            console.log("json issue");
+            res.writeHead(400, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({ error: 'Invalid JSON.' }));
+            return;
+        }
+
+        const { oldPassword, newUsername, newPassword } = body;        
+        let user = null;
+
+        // check old password
+        try {
+            user = await getUserById(session.userId);
+            await checkUser(user.username, oldPassword);
+        }
+        catch (error) {
+            console.log("invalid user password");
+            res.writeHead(403, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({ error: 'Wrong password.' }));
+            return;
+        }
+
+        // edit user
+        try {
+            await editUser(user.username, newUsername, newPassword);
+            res.writeHead(201, { 'Content-Type': 'application/json' }); 
+            res.end(JSON.stringify({ message: 'Edit success!' }));
+            return;
+        }
+        catch (error) {
+            console.log("edit profile failed");
+            res.writeHead(400, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({ error: 'Edit profile failure.' }));
+            return;
         }
     }
 

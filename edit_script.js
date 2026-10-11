@@ -35,15 +35,39 @@ const submitEditHandler = async function(e) {
     const confirmPassword = document.getElementById('confirm-password').value.trim();
 
     clearErrorField();
+    const errorField = document.getElementById('edit-error');
     const error = validateProfileChanges(newUsername, newPassword, confirmPassword);
+    
     if (error !== null) {
-        const errorField = document.getElementById('edit-error');
         errorField.textContent = error;
         return;
     }
 
-    // check the old password at some point
+    try {
+        const response = await fetch('/api/edit', { method: 'PUT',
+             headers: { 'Content-Type': 'application/json' }, 
+             body: JSON.stringify({ oldPassword, newUsername, newPassword }) }); 
 
+        if (!response.ok) {
+            if (response.status == 403) {
+                errorField.textContent = 'Неправилна парола!';
+            }
+            else if (response.status == 401) {
+                window.location.href = '/login';
+            }
+            else {
+                errorField.textContent = 'Грешка при промяна';
+            }
+
+            return;
+        }
+    }
+    catch (error) {
+        errorField.textContent = 'Грешка при свързване със сървъра.';
+    }
+
+    const successField = document.getElementById('success');
+    successField.textContent = 'Успешно променени данни!';
 }
 
 const editForm = document.getElementById('edit-form');
