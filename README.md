@@ -75,25 +75,25 @@ Backend/server страна - написана на Javascript.
 
 За да се заредят данните за базата, нужно е да се създаде .env файл в основната директория в следния формат:
 
-DB_HOST='някакъв_хост'
-DB_USER='някакво_име'
-DB_PASSWORD='някаква_парола'
-DB_NAME='userApp'
+    DB_HOST='някакъв_хост'
+    DB_USER='някакво_име'
+    DB_PASSWORD='някаква_парола'
+    DB_NAME='userApp'
 
 Алтернативно може във файла db.js да се променят на следните редове:
 
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
+    const pool = mysql.createPool({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME
+    });
 
 на 
 
-const pool = mysql.createPool({
-    host: 'някакъв_хост',
-    user: 'някакво_име',
-    password: 'някаква_парола',
-    database: 'userApp'
-});
+    const pool = mysql.createPool({
+        host: 'някакъв_хост',
+        user: 'някакво_име',
+        password: 'някаква_парола',
+        database: 'userApp'
+    });
