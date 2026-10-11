@@ -80,7 +80,7 @@ Backend/server страна - написана на Javascript.
     DB_PASSWORD='някаква_парола'
     DB_NAME='userApp'
 
-Алтернативно може във файла db.js да се променят на следните редове:
+Алтернативно може във файла db.js да се променят следните редове:
 
     const pool = mysql.createPool({
         host: process.env.DB_HOST,
